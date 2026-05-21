@@ -1,0 +1,206 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "background": "#fffdfb",
+  "padding": 18,
+  "width": 760,
+  "height": 380,
+
+  "title": {
+    "text": "How prepared are countries for future cardiovascular burden?",
+    "subtitle": "Darker cells indicate stronger preparedness. Health pressure is reverse-scored so higher is better.",
+    "anchor": "start",
+    "fontSize": 24,
+    "subtitleFontSize": 13,
+    "fontWeight": "bold",
+    "color": "#5a2436",
+    "subtitleColor": "#7b646b"
+  },
+
+  "data": {
+    "url": "../data/global_cvd_burden_2025_2050.csv"
+  },
+
+  "transform": [
+    {
+      "filter": "datum.year == 2050"
+    },
+
+    {
+      "filter": "datum.country == 'Australia' || datum.country == 'Germany' || datum.country == 'Japan' || datum.country == 'China' || datum.country == 'India' || datum.country == 'Nigeria'"
+    },
+
+    {
+      "calculate": "100 - datum.healthcare_pressure_score",
+      "as": "health_pressure_reversed"
+    },
+
+    {
+      "fold": [
+        "primary_prevention_score",
+        "hypertension_treatment_coverage_pct",
+        "statin_therapy_coverage_pct",
+        "cardiac_rehab_access_pct",
+        "health_pressure_reversed"
+      ],
+      "as": ["indicator_raw", "score"]
+    },
+
+    {
+      "calculate": "datum.indicator_raw == 'primary_prevention_score' ? 'Prevention' : datum.indicator_raw == 'hypertension_treatment_coverage_pct' ? 'BP treatment' : datum.indicator_raw == 'statin_therapy_coverage_pct' ? 'Statin therapy' : datum.indicator_raw == 'cardiac_rehab_access_pct' ? 'Cardiac rehab' : 'Lower health pressure'",
+      "as": "indicator"
+    }
+  ],
+
+  "layer": [
+    {
+      "mark": {
+        "type": "rect",
+        "cornerRadius": 0,
+        "strokeWidth": 0
+      },
+
+      "encoding": {
+        "x": {
+          "field": "indicator",
+          "type": "nominal",
+          "title": null,
+
+          "sort": [
+            "Prevention",
+            "BP treatment",
+            "Statin therapy",
+            "Cardiac rehab",
+            "Lower health pressure"
+          ],
+
+          "axis": {
+            "labelFontSize": 12,
+            "labelFontWeight": "bold",
+            "labelAngle": 0
+          }
+        },
+
+        "y": {
+          "field": "country",
+          "type": "nominal",
+          "title": null,
+
+          "sort": [
+            "Australia",
+            "Germany",
+            "Japan",
+            "China",
+            "India",
+            "Nigeria"
+          ],
+
+          "axis": {
+            "labelFontSize": 12,
+            "labelFontWeight": "bold"
+          }
+        },
+
+        "color": {
+          "field": "score",
+          "type": "quantitative",
+          "title": "Preparedness score",
+
+          "scale": {
+            "domain": [0, 100],
+            "range": [
+              "#f8e6ea",
+              "#d87093",
+              "#8b2f50",
+              "#3b1025"
+            ]
+          },
+
+          "legend": {
+            "orient": "bottom",
+            "direction": "horizontal"
+          }
+        },
+
+        "tooltip": [
+          {
+            "field": "country",
+            "title": "Country"
+          },
+
+          {
+            "field": "indicator",
+            "title": "Indicator"
+          },
+
+          {
+            "field": "score",
+            "title": "Preparedness score",
+            "format": ".1f"
+          }
+        ]
+      }
+    },
+
+    {
+      "mark": {
+        "type": "text",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "color": "#2d1b22"
+      },
+
+      "encoding": {
+        "x": {
+          "field": "indicator",
+          "type": "nominal",
+
+          "sort": [
+            "Prevention",
+            "BP treatment",
+            "Statin therapy",
+            "Cardiac rehab",
+            "Lower health pressure"
+          ]
+        },
+
+        "y": {
+          "field": "country",
+          "type": "nominal",
+
+          "sort": [
+            "Australia",
+            "Germany",
+            "Japan",
+            "China",
+            "India",
+            "Nigeria"
+          ]
+        },
+
+        "text": {
+          "field": "score",
+          "type": "quantitative",
+          "format": ".0f"
+        }
+      }
+    }
+  ],
+
+  "config": {
+    "view": {
+      "stroke": null
+    },
+
+    "axis": {
+      "domain": false,
+      "ticks": false,
+      "labelColor": "#2d1b22",
+      "titleColor": "#5a2436"
+    },
+
+    "legend": {
+      "labelColor": "#5a2436",
+      "titleColor": "#5a2436"
+    }
+  }
+}

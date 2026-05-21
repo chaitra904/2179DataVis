@@ -1,0 +1,203 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "background": "#fffdfb",
+  "padding": 20,
+  "width": 760,
+  "height": 380,
+
+  "title": {
+    "text": "Which factors differ most between low- and high-risk patients?",
+    "subtitle": "Dumbbell chart shows percentage difference from the low-risk group, avoiding mixed-unit scale issues.",
+    "anchor": "start",
+    "fontSize": 24,
+    "subtitleFontSize": 13,
+    "fontWeight": "bold",
+    "color": "#5a2436",
+    "subtitleColor": "#7b646b"
+  },
+
+  "data": {
+    "url": "../data/heart_attack_prediction_dataset.csv"
+  },
+
+  "transform": [
+    {"filter": "datum['Heart Attack Risk'] != null"},
+
+    {
+      "calculate": "datum['Heart Attack Risk'] == 0 ? 'Low risk' : 'High risk'",
+      "as": "risk_group"
+    },
+
+    {
+      "fold": [
+        "Cholesterol",
+        "Triglycerides",
+        "BMI",
+        "Stress Level",
+        "Sedentary Hours Per Day",
+        "Exercise Hours Per Week",
+        "Sleep Hours Per Day"
+      ],
+      "as": ["factor", "value"]
+    },
+
+    {
+      "calculate": "datum.factor == 'Stress Level' ? 'Stress' : datum.factor == 'Sedentary Hours Per Day' ? 'Sedentary time' : datum.factor == 'Exercise Hours Per Week' ? 'Exercise hours' : datum.factor == 'Sleep Hours Per Day' ? 'Sleep duration' : datum.factor",
+      "as": "clean_factor"
+    },
+
+    {
+      "aggregate": [
+        {"op": "mean", "field": "value", "as": "avg_value"}
+      ],
+      "groupby": ["clean_factor", "risk_group"]
+    },
+
+    {
+      "pivot": "risk_group",
+      "value": "avg_value",
+      "groupby": ["clean_factor"]
+    },
+
+    {
+      "calculate": "((datum['High risk'] - datum['Low risk']) / datum['Low risk']) * 100",
+      "as": "pct_difference"
+    },
+
+    {
+      "calculate": "abs(datum.pct_difference)",
+      "as": "abs_difference"
+    },
+
+    {
+      "calculate": "0",
+      "as": "low_position"
+    },
+
+    {
+      "calculate": "datum.pct_difference",
+      "as": "high_position"
+    },
+
+    {
+      "fold": ["low_position", "high_position"],
+      "as": ["point_type", "position"]
+    },
+
+    {
+      "calculate": "datum.point_type == 'low_position' ? 'Low risk baseline' : 'High risk difference'",
+      "as": "legend_group"
+    }
+  ],
+
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 4,
+        "opacity": 0.45,
+        "strokeCap": "round",
+        "color": "#d8b8c3"
+      },
+      "encoding": {
+        "y": {
+          "field": "clean_factor",
+          "type": "nominal",
+          "sort": {"field": "abs_difference", "order": "descending"},
+          "title": null
+        },
+        "x": {
+          "field": "low_position",
+          "type": "quantitative",
+          "title": "% difference from low-risk group",
+          "scale": {"domain": [-1.5, 1.8]}
+        },
+        "x2": {
+          "field": "high_position"
+        }
+      }
+    },
+
+    {
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "size": 95,
+        "stroke": "#2d1b22",
+        "strokeWidth": 0.7
+      },
+      "encoding": {
+        "y": {
+          "field": "clean_factor",
+          "type": "nominal",
+          "sort": {"field": "abs_difference", "order": "descending"},
+          "title": null
+        },
+        "x": {
+          "field": "position",
+          "type": "quantitative",
+          "title": "% difference from low-risk group",
+          "scale": {"domain": [-1.5, 1.8]}
+        },
+        "color": {
+          "field": "legend_group",
+          "type": "nominal",
+          "title": "Comparison point",
+          "scale": {
+            "domain": ["Low risk baseline", "High risk difference"],
+            "range": ["#7ea7a1", "#d1495b"]
+          }
+        },
+        "tooltip": [
+          {"field": "clean_factor", "title": "Factor"},
+          {"field": "legend_group", "title": "Point"},
+          {"field": "position", "title": "% difference", "format": "+.1f"}
+        ]
+      }
+    },
+
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 8,
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "color": "#2d1b22"
+      },
+      "encoding": {
+        "y": {
+          "field": "clean_factor",
+          "type": "nominal",
+          "sort": {"field": "abs_difference", "order": "descending"}
+        },
+        "x": {
+          "field": "high_position",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "pct_difference",
+          "type": "quantitative",
+          "format": "+.1f"
+        }
+      }
+    }
+  ],
+
+  "config": {
+    "view": {"stroke": null},
+    "axis": {
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#f0ddd6",
+      "labelColor": "#6f5b61",
+      "titleColor": "#5a2436",
+      "titleFontWeight": "bold"
+    },
+    "legend": {
+      "labelFontSize": 11,
+      "titleFontSize": 12,
+      "labelColor": "#2d1b22"
+    }
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "background": "#f7fbff",
+  "title": {
+    "text": "Where does Australia stand in the global cardiovascular crisis?",
+    "subtitle": "Projected age-standardised CVD mortality rate per 100,000 people in 2050",
+    "anchor": "start",
+    "fontSize": 24,
+    "subtitleFontSize": 14,
+    "fontWeight": "bold",
+    "color": "#0b1f3a",
+    "subtitleColor": "#3b4a5a"
+  },
+  "width": 920,
+  "height": 500,
+  "projection": {"type": "equalEarth"},
+  "data": {"url": "../data/global_cvd_burden_2025_2050.csv"},
+  "transform": [
+    {"filter": "datum.year == 2050"},
+    {
+      "lookup": "country",
+      "from": {
+        "data": {
+          "url": "https://raw.githubusercontent.com/FIT3179/Vega-Lite/main/3_choropleth_map/js/ne_110m_admin_0_countries.topojson",
+          "format": {
+            "type": "topojson",
+            "feature": "ne_110m_admin_0_countries"
+          }
+        },
+        "key": "properties.NAME"
+      },
+      "as": "geo"
+    },
+    {"filter": "datum.geo != null"}
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "geoshape",
+        "stroke": "#ffffff",
+        "strokeWidth": 0.45
+      },
+      "encoding": {
+        "shape": {"field": "geo", "type": "geojson"},
+        "color": {
+          "field": "age_std_mortality_rate_per_100k",
+          "type": "quantitative",
+          "title": "Deaths per 100k",
+          "scale": {"scheme": "blues", "domain": [0, 250]},
+          "legend": {
+            "orient": "bottom",
+            "direction": "horizontal",
+            "gradientLength": 500,
+            "gradientThickness": 14,
+            "titleFontSize": 12,
+            "labelFontSize": 11,
+            "titleColor": "#0b1f3a",
+            "labelColor": "#0b1f3a"
+          }
+        },
+        "tooltip": [
+          {"field": "country", "title": "Country"},
+          {"field": "continent", "title": "Continent"},
+          {"field": "sociodemographic_index", "title": "SDI group"},
+          {
+            "field": "age_std_mortality_rate_per_100k",
+            "title": "Mortality rate per 100k",
+            "format": ".1f"
+          },
+          {
+            "field": "crude_cvd_deaths",
+            "title": "Projected CVD deaths",
+            "format": ","
+          },
+          {
+            "field": "healthcare_pressure_score",
+            "title": "Healthcare pressure score",
+            "format": ".1f"
+          }
+        ]
+      }
+    },
+    {
+      "transform": [{"filter": "datum.country == 'Australia'"}],
+      "mark": {
+        "type": "geoshape",
+        "fill": null,
+        "stroke": "#012169",
+        "strokeWidth": 4
+      },
+      "encoding": {
+        "shape": {"field": "geo", "type": "geojson"}
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "label": "Australia: lower projected mortality, but still visible in the global burden",
+            "lon": 134,
+            "lat": -27
+          },
+          {
+            "label": "Highest projected mortality cluster across Central Asia",
+            "lon": 68,
+            "lat": 42
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "color": "#0b1f3a",
+        "dx": 8
+      },
+      "encoding": {
+        "longitude": {"field": "lon", "type": "quantitative"},
+        "latitude": {"field": "lat", "type": "quantitative"},
+        "text": {"field": "label"}
+      }
+    }
+  ],
+  "config": {
+    "view": {"stroke": null},
+    "axis": {"grid": false}
+  }
+}

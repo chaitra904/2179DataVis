@@ -1,0 +1,207 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "background": "#fffdfb",
+  "padding": 20,
+  "title": {
+    "text": "How does smoking intensity relate to cardiovascular risk?",
+    "subtitle": "Heatmap showing the percentage of patients in each smoking group with major clinical risk indicators.",
+    "anchor": "start",
+    "fontSize": 22,
+    "subtitleFontSize": 13,
+    "fontWeight": "bold",
+    "color": "#5a2436",
+    "subtitleColor": "#6f5b61"
+  },
+  "width": 620,
+  "height": 330,
+  "data": {
+    "url": "../data/smoking_risk_data.csv"
+  },
+  "transform": [
+    {
+      "filter": "datum.cigsPerDay != null && datum.sysBP != null && datum.totChol != null && datum.BMI != null && datum.glucose != null"
+    },
+    {
+      "calculate": "datum.cigsPerDay == 0 ? 'Non-smoker' : datum.cigsPerDay <= 10 ? 'Light smoker' : datum.cigsPerDay <= 20 ? 'Moderate smoker' : 'Heavy smoker'",
+      "as": "smoking_group"
+    },
+    {
+      "calculate": "datum.sysBP >= 140 || datum.diaBP >= 90 ? 1 : 0",
+      "as": "High blood pressure"
+    },
+    {
+      "calculate": "datum.totChol >= 240 ? 1 : 0",
+      "as": "High cholesterol"
+    },
+    {
+      "calculate": "datum.BMI >= 30 ? 1 : 0",
+      "as": "Obesity"
+    },
+    {
+      "calculate": "datum.glucose >= 126 ? 1 : 0",
+      "as": "High glucose"
+    },
+    {
+      "calculate": "datum.diabetes == 1 ? 1 : 0",
+      "as": "Diabetes"
+    },
+    {
+      "calculate": "datum.prevalentHyp == 1 ? 1 : 0",
+      "as": "Existing hypertension"
+    },
+    {
+      "fold": [
+        "High blood pressure",
+        "High cholesterol",
+        "Obesity",
+        "High glucose",
+        "Diabetes",
+        "Existing hypertension"
+      ],
+      "as": ["risk_indicator", "risk_value"]
+    },
+    {
+      "aggregate": [
+        {
+          "op": "mean",
+          "field": "risk_value",
+          "as": "risk_rate"
+        },
+        {
+          "op": "count",
+          "as": "patients"
+        }
+      ],
+      "groupby": ["smoking_group", "risk_indicator"]
+    },
+    {
+      "calculate": "datum.risk_rate * 100",
+      "as": "risk_percent"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "rect",
+        "cornerRadius": 6,
+        "stroke": "#fff8f5",
+        "strokeWidth": 3
+      },
+      "encoding": {
+        "x": {
+          "field": "risk_indicator",
+          "type": "nominal",
+          "title": null,
+          "sort": [
+            "High blood pressure",
+            "Existing hypertension",
+            "High cholesterol",
+            "High glucose",
+            "Diabetes",
+            "Obesity"
+          ],
+          "axis": {
+            "labelAngle": -25,
+            "labelFontSize": 11,
+            "labelColor": "#2d1b22",
+            "labelFontWeight": "bold"
+          }
+        },
+        "y": {
+          "field": "smoking_group",
+          "type": "nominal",
+          "title": null,
+          "sort": [
+            "Non-smoker",
+            "Light smoker",
+            "Moderate smoker",
+            "Heavy smoker"
+          ],
+          "axis": {
+            "labelFontSize": 12,
+            "labelColor": "#2d1b22",
+            "labelFontWeight": "bold"
+          }
+        },
+        "color": {
+          "field": "risk_percent",
+          "type": "quantitative",
+          "title": "% of patients",
+          "scale": {
+            "domain": [0, 70],
+            "range": ["#fff1f2", "#f9a8b6", "#be3455", "#5a1028"]
+          },
+          "legend": {
+            "orient": "right",
+            "format": ".0f"
+          }
+        },
+        "tooltip": [
+          {
+            "field": "smoking_group",
+            "title": "Smoking group"
+          },
+          {
+            "field": "risk_indicator",
+            "title": "Risk indicator"
+          },
+          {
+            "field": "risk_percent",
+            "title": "Patients affected",
+            "format": ".1f"
+          },
+          {
+            "field": "patients",
+            "title": "Patient count"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "color": "#2d1b22"
+      },
+      "encoding": {
+        "x": {
+          "field": "risk_indicator",
+          "type": "nominal",
+          "sort": [
+            "High blood pressure",
+            "Existing hypertension",
+            "High cholesterol",
+            "High glucose",
+            "Diabetes",
+            "Obesity"
+          ]
+        },
+        "y": {
+          "field": "smoking_group",
+          "type": "nominal",
+          "sort": [
+            "Non-smoker",
+            "Light smoker",
+            "Moderate smoker",
+            "Heavy smoker"
+          ]
+        },
+        "text": {
+          "field": "risk_percent",
+          "type": "quantitative",
+          "format": ".0f"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "domain": false,
+      "ticks": false
+    }
+  }
+}

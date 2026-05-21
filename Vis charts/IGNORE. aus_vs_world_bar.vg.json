@@ -1,0 +1,103 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "title": {
+    "text": "Where does Australia stand in projected cardiovascular mortality?",
+    "subtitle": "Top countries by age-standardised CVD mortality rate in 2050, with Australia highlighted"
+  },
+  "width": 720,
+  "height": 480,
+  "data": {
+    "url": "../data/global_cvd_burden_2025_2050.csv"
+  },
+  "transform": [
+    {"filter": "datum.year == 2050"},
+    {
+      "window": [{"op": "rank", "as": "rank"}],
+      "sort": [{"field": "age_std_mortality_rate_per_100k", "order": "descending"}]
+    },
+    {"filter": "datum.rank <= 15 || datum.country == 'Australia'"}
+  ],
+  "layer": [
+    {
+      "mark": {"type": "bar", "cornerRadiusEnd": 4},
+      "encoding": {
+        "y": {
+          "field": "country",
+          "type": "nominal",
+          "sort": "-x",
+          "title": null
+        },
+        "x": {
+          "field": "age_std_mortality_rate_per_100k",
+          "type": "quantitative",
+          "title": "Age-standardised CVD mortality rate per 100,000 people"
+        },
+        "color": {
+          "condition": {
+            "test": "datum.country == 'Australia'",
+            "value": "#d62728"
+          },
+          "value": "#9ecae1"
+        },
+        "tooltip": [
+          {"field": "country", "title": "Country"},
+          {"field": "continent", "title": "Continent"},
+          {"field": "sociodemographic_index", "title": "SDI group"},
+          {
+            "field": "age_std_mortality_rate_per_100k",
+            "title": "Mortality rate per 100k",
+            "format": ".1f"
+          },
+          {
+            "field": "crude_cvd_deaths",
+            "title": "Projected CVD deaths",
+            "format": ","
+          },
+          {
+            "field": "healthcare_pressure_score",
+            "title": "Healthcare pressure score",
+            "format": ".1f"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "baseline": "middle",
+        "dx": 5,
+        "fontSize": 11
+      },
+      "encoding": {
+        "y": {
+          "field": "country",
+          "type": "nominal",
+          "sort": "-x"
+        },
+        "x": {
+          "field": "age_std_mortality_rate_per_100k",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "age_std_mortality_rate_per_100k",
+          "type": "quantitative",
+          "format": ".1f"
+        },
+        "color": {"value": "#333"}
+      }
+    }
+  ],
+  "config": {
+    "axis": {
+      "labelFontSize": 11,
+      "titleFontSize": 12
+    },
+    "title": {
+      "fontSize": 18,
+      "subtitleFontSize": 12,
+      "anchor": "start"
+    },
+    "view": {"stroke": null}
+  }
+}

@@ -1,0 +1,179 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+
+  "background": "#fffdfb",
+
+  "title": {
+    "text": "Do heavy smokers show elevated cardiovascular risk earlier in life?",
+    "subtitle": "Average systolic blood pressure is compared across smoking intensity and age groups.",
+    "anchor": "start",
+    "fontSize": 22,
+    "subtitleFontSize": 13,
+    "fontWeight": "bold",
+    "color": "#5a2436",
+    "subtitleColor": "#6f5b61"
+  },
+
+  "width": 680,
+  "height": 340,
+
+  "data": {
+    "url": "../data/smoking_risk_data.csv"
+  },
+
+  "transform": [
+    {
+      "filter": "datum.age != null && datum.cigsPerDay != null && datum.sysBP != null"
+    },
+
+    {
+      "calculate": "datum.age < 40 ? 'Under 40' : datum.age < 50 ? '40–49' : datum.age < 60 ? '50–59' : '60+'",
+      "as": "age_group"
+    },
+
+    {
+      "calculate": "datum.cigsPerDay == 0 ? 'Non-smoker' : datum.cigsPerDay <= 10 ? 'Light smoker' : datum.cigsPerDay <= 20 ? 'Moderate smoker' : 'Heavy smoker'",
+      "as": "smoking_group"
+    },
+
+    {
+      "aggregate": [
+        {
+          "op": "mean",
+          "field": "sysBP",
+          "as": "avg_sysBP"
+        }
+      ],
+
+      "groupby": [
+        "age_group",
+        "smoking_group"
+      ]
+    }
+  ],
+
+  "layer": [
+
+    {
+      "mark": {
+        "type": "rect",
+        "cornerRadius": 8,
+        "stroke": "#fff8f5",
+        "strokeWidth": 3
+      },
+
+      "encoding": {
+
+        "x": {
+          "field": "age_group",
+          "type": "ordinal",
+          "title": "Age group",
+          "sort": ["Under 40", "40–49", "50–59", "60+"],
+          "axis": {
+            "labelFontSize": 12,
+            "labelFontWeight": "bold",
+            "labelColor": "#2d1b22"
+          }
+        },
+
+        "y": {
+          "field": "smoking_group",
+          "type": "ordinal",
+          "title": "Smoking intensity",
+          "sort": [
+            "Non-smoker",
+            "Light smoker",
+            "Moderate smoker",
+            "Heavy smoker"
+          ],
+          "axis": {
+            "labelFontSize": 12,
+            "labelFontWeight": "bold",
+            "labelColor": "#2d1b22"
+          }
+        },
+
+        "color": {
+          "field": "avg_sysBP",
+          "type": "quantitative",
+          "title": "Average systolic BP",
+
+          "scale": {
+            "scheme": "reds"
+          },
+
+          "legend": {
+            "orient": "right"
+          }
+        },
+
+        "tooltip": [
+          {
+            "field": "age_group",
+            "title": "Age group"
+          },
+
+          {
+            "field": "smoking_group",
+            "title": "Smoking intensity"
+          },
+
+          {
+            "field": "avg_sysBP",
+            "title": "Average systolic BP",
+            "format": ".1f"
+          }
+        ]
+      }
+    },
+
+    {
+      "mark": {
+        "type": "text",
+        "fontWeight": "bold",
+        "fontSize": 12,
+        "color": "#2d1b22"
+      },
+
+      "encoding": {
+
+        "x": {
+          "field": "age_group",
+          "type": "ordinal",
+          "sort": ["Under 40", "40–49", "50–59", "60+"]
+        },
+
+        "y": {
+          "field": "smoking_group",
+          "type": "ordinal",
+          "sort": [
+            "Non-smoker",
+            "Light smoker",
+            "Moderate smoker",
+            "Heavy smoker"
+          ]
+        },
+
+        "text": {
+          "field": "avg_sysBP",
+          "type": "quantitative",
+          "format": ".0f"
+        }
+      }
+    }
+  ],
+
+  "config": {
+
+    "view": {
+      "stroke": null
+    },
+
+    "axis": {
+      "domain": false,
+      "ticks": false,
+      "titleFontWeight": "bold",
+      "titleColor": "#5a2436"
+    }
+  }
+}

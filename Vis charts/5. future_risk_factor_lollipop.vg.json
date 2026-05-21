@@ -1,0 +1,128 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "background": "#f8fbff",
+  "padding": 20,
+  "title": {
+    "text": "Which modifiable risks drive future cardiovascular burden?",
+    "subtitle": "Ranked by average attributable contribution to projected CVD deaths",
+    "anchor": "start",
+    "fontSize": 23,
+    "subtitleFontSize": 13,
+    "fontWeight": "bold",
+    "color": "#071d3a",
+    "subtitleColor": "#475569"
+  },
+  "width": 760,
+  "height": 380,
+  "data": {
+    "values": [
+      {"risk": "High blood pressure", "value": 42},
+      {"risk": "High LDL cholesterol", "value": 31},
+      {"risk": "High BMI", "value": 28},
+      {"risk": "High blood glucose", "value": 22},
+      {"risk": "Tobacco", "value": 18}
+    ]
+  },
+  "transform": [
+    {"calculate": "0", "as": "start"}
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "rule",
+        "strokeWidth": 9,
+        "opacity": 0.4
+      },
+      "encoding": {
+        "y": {
+          "field": "risk",
+          "type": "nominal",
+          "sort": "-x",
+          "title": null
+        },
+        "x": {
+          "field": "start",
+          "type": "quantitative",
+          "scale": {"domain": [0, 50]},
+          "axis": {
+            "grid": true,
+            "gridColor": "#e2e8f0",
+            "title": "Average attributable contribution (%)"
+          }
+        },
+        "x2": {"field": "value"},
+        "color": {
+          "condition": {
+            "test": "datum.risk == 'High blood pressure'",
+            "value": "#2563eb"
+          },
+          "value": "#b8b1ad"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "circle",
+        "size": 700
+      },
+      "encoding": {
+        "y": {
+          "field": "risk",
+          "type": "nominal",
+          "sort": "-x",
+          "title": "Risk factor"
+        },
+        "x": {
+          "field": "value",
+          "type": "quantitative"
+        },
+        "color": {
+          "condition": {
+            "test": "datum.risk == 'High blood pressure'",
+            "value": "#2563eb"
+          },
+          "value": "#b8b1ad"
+        },
+        "tooltip": [
+          {"field": "risk", "title": "Risk factor"},
+          {"field": "value", "title": "Contribution (%)"}
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 12,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "color": "#071d3a"
+      },
+      "encoding": {
+        "y": {
+          "field": "risk",
+          "type": "nominal",
+          "sort": "-x"
+        },
+        "x": {
+          "field": "value",
+          "type": "quantitative"
+        },
+        "text": {
+          "field": "value",
+          "type": "quantitative",
+          "format": ".0f"
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {"stroke": null},
+    "axis": {
+      "labelFontSize": 12,
+      "titleFontSize": 12,
+      "labelColor": "#334155",
+      "titleColor": "#071d3a"
+    }
+  }
+}

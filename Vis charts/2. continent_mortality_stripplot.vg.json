@@ -1,0 +1,147 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "background": "#fffdfb",
+  "padding": 18,
+  "width": 780,
+  "height": 390,
+  "title": {
+    "text": "How uneven is projected cardiovascular mortality across regions?",
+    "subtitle": "Dots show country-level mortality in 2050; thick ticks show medians. Oceania is excluded because it only has two countries; Australia is shown as a reference line.",
+    "anchor": "start",
+    "fontSize": 24,
+    "subtitleFontSize": 13,
+    "fontWeight": "bold",
+    "color": "#5a2436",
+    "subtitleColor": "#7b646b"
+  },
+  "data": {
+    "url": "../data/global_cvd_burden_2025_2050.csv"
+  },
+  "transform": [
+    {"filter": "datum.year == 2050"},
+    {
+      "filter": "datum.continent == 'Africa' || datum.continent == 'Asia' || datum.continent == 'Europe' || datum.continent == 'Americas'"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "point",
+        "filled": true,
+        "size": 75,
+        "opacity": 0.42
+      },
+      "encoding": {
+        "x": {
+          "field": "continent",
+          "type": "nominal",
+          "title": "Continent",
+          "sort": ["Africa", "Americas", "Asia", "Europe"],
+          "axis": {
+            "labelFontSize": 13,
+            "labelFontWeight": "bold",
+            "labelAngle": 0
+          }
+        },
+        "y": {
+          "field": "age_std_mortality_rate_per_100k",
+          "type": "quantitative",
+          "title": "Age-standardised CVD mortality rate per 100,000 people",
+          "scale": {"domain": [0, 350]}
+        },
+        "color": {
+          "field": "continent",
+          "type": "nominal",
+          "legend": null,
+          "scale": {
+            "domain": ["Africa", "Americas", "Asia", "Europe"],
+            "range": ["#d1495b", "#b892ff", "#4aa3c7", "#d98f6f"]
+          }
+        },
+        "tooltip": [
+          {"field": "country", "title": "Country"},
+          {"field": "continent", "title": "Continent"},
+          {
+            "field": "age_std_mortality_rate_per_100k",
+            "title": "Mortality rate",
+            "format": ".1f"
+          }
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "tick",
+        "thickness": 5,
+        "size": 58,
+        "color": "#5a2436"
+      },
+      "encoding": {
+        "x": {
+          "field": "continent",
+          "type": "nominal",
+          "sort": ["Africa", "Americas", "Asia", "Europe"]
+        },
+        "y": {
+          "aggregate": "median",
+          "field": "age_std_mortality_rate_per_100k",
+          "type": "quantitative"
+        }
+      }
+    },
+    {
+      "data": {
+        "values": [{"value": 20.9}]
+      },
+      "mark": {
+        "type": "rule",
+        "strokeDash": [6, 5],
+        "strokeWidth": 2,
+        "color": "#d1495b"
+      },
+      "encoding": {
+        "y": {"field": "value", "type": "quantitative"}
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "label": "Australia: 20.9 deaths per 100k",
+            "value": 20.9,
+            "x": "Asia"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 10,
+        "dy": -10,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "color": "#5a2436"
+      },
+      "encoding": {
+        "x": {
+          "field": "x",
+          "type": "nominal",
+          "sort": ["Africa", "Americas", "Asia", "Europe"]
+        },
+        "y": {"field": "value", "type": "quantitative"},
+        "text": {"field": "label"}
+      }
+    }
+  ],
+  "config": {
+    "view": {"stroke": null},
+    "axis": {
+      "domain": false,
+      "ticks": false,
+      "gridColor": "#f0ddd6",
+      "labelColor": "#6f5b61",
+      "titleColor": "#5a2436",
+      "titleFontWeight": "bold"
+    }
+  }
+}

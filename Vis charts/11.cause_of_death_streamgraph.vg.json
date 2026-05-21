@@ -1,0 +1,138 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "width": 900,
+  "height": 430,
+  "background": "#fff8f5",
+  "padding": 18,
+
+  "title": {
+    "text": "How has cardiovascular mortality evolved relative to other major diseases?",
+    "subtitle": "Streamgraph comparing total deaths across major disease groups from 1990 to 2019.",
+    "anchor": "start",
+    "fontSize": 26,
+    "fontWeight": "bold",
+    "color": "#5a2436",
+    "subtitleFontSize": 14,
+    "subtitleColor": "#7a646b"
+  },
+
+  "data": {
+    "url": "../data/cause_of_deaths.csv"
+  },
+
+  "transform": [
+    {
+      "fold": [
+        "Cardiovascular Diseases",
+        "Neoplasms",
+        "Chronic Respiratory Diseases",
+        "Diabetes Mellitus",
+        "HIV/AIDS"
+      ],
+      "as": ["Disease", "Deaths"]
+    },
+    {
+      "aggregate": [
+        {
+          "op": "sum",
+          "field": "Deaths",
+          "as": "TotalDeaths"
+        }
+      ],
+      "groupby": ["Year", "Disease"]
+    }
+  ],
+
+  "mark": {
+    "type": "area",
+    "interpolate": "monotone",
+    "opacity": 0.82
+  },
+
+  "encoding": {
+    "x": {
+      "field": "Year",
+      "type": "ordinal",
+      "title": "Year",
+      "axis": {
+        "labelAngle": 0,
+        "labelColor": "#6f5b61",
+        "titleColor": "#5a2436",
+        "labelFontSize": 11,
+        "titleFontSize": 13,
+        "grid": false
+      }
+    },
+
+    "y": {
+      "field": "TotalDeaths",
+      "type": "quantitative",
+      "stack": "center",
+      "title": "Total deaths",
+      "axis": {
+        "labelColor": "#6f5b61",
+        "titleColor": "#5a2436",
+        "labelFontSize": 11,
+        "titleFontSize": 13,
+        "gridColor": "#ead8d1",
+        "format": "~s"
+      }
+    },
+
+    "color": {
+      "field": "Disease",
+      "type": "nominal",
+      "title": "Disease category",
+      "scale": {
+        "domain": [
+          "Cardiovascular Diseases",
+          "Neoplasms",
+          "Chronic Respiratory Diseases",
+          "Diabetes Mellitus",
+          "HIV/AIDS"
+        ],
+        "range": [
+          "#7b2d4f",
+          "#b76e79",
+          "#d98fa3",
+          "#e8b4c4",
+          "#c88f75"
+        ]
+      },
+      "legend": {
+        "orient": "right",
+        "labelColor": "#5a2436",
+        "titleColor": "#5a2436",
+        "labelFontSize": 12,
+        "titleFontSize": 13
+      }
+    },
+
+    "tooltip": [
+      {
+        "field": "Year",
+        "title": "Year"
+      },
+      {
+        "field": "Disease",
+        "title": "Disease"
+      },
+      {
+        "field": "TotalDeaths",
+        "title": "Total deaths",
+        "format": ","
+      }
+    ]
+  },
+
+  "config": {
+    "view": {
+      "stroke": null
+    },
+    "axis": {
+      "domain": false,
+      "ticks": false,
+      "titleFontWeight": "bold"
+    }
+  }
+}

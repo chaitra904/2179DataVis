@@ -1,0 +1,124 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "background": "#fffdfb",
+  "padding": 18,
+  "width": 760,
+  "height": 360,
+  "title": {
+    "text": "Which cardiovascular diseases make up the future death burden?",
+    "subtitle": "Ranked share of projected global CVD deaths in 2050.",
+    "anchor": "start",
+    "fontSize": 24,
+    "subtitleFontSize": 13,
+    "fontWeight": "bold",
+    "color": "#5a2436",
+    "subtitleColor": "#7b646b"
+  },
+  "data": {
+    "values": [
+      {"disease": "Ischemic heart disease", "share": 42.3},
+      {"disease": "Stroke", "share": 32.8},
+      {"disease": "Hypertensive heart disease", "share": 10.8},
+      {"disease": "Heart failure", "share": 9.7},
+      {"disease": "Other / PAD", "share": 4.3}
+    ]
+  },
+  "layer": [
+    {
+      "mark": {
+        "type": "bar",
+        "cornerRadiusEnd": 7
+      },
+      "encoding": {
+        "y": {
+          "field": "disease",
+          "type": "nominal",
+          "sort": "-x",
+          "title": null,
+          "axis": {
+            "labelFontSize": 13,
+            "labelFontWeight": "bold",
+            "labelColor": "#2d1b22"
+          }
+        },
+        "x": {
+          "field": "share",
+          "type": "quantitative",
+          "title": "Share of projected CVD deaths (%)",
+          "scale": {"domain": [0, 50]},
+          "axis": {
+            "gridColor": "#f0ddd6",
+            "labelColor": "#6f5b61"
+          }
+        },
+        "color": {
+          "field": "disease",
+          "type": "nominal",
+          "legend": null,
+          "scale": {
+            "domain": [
+              "Ischemic heart disease",
+              "Stroke",
+              "Hypertensive heart disease",
+              "Heart failure",
+              "Other / PAD"
+            ],
+            "range": ["#5a2436", "#b83a5a", "#d96c8a", "#e8b4c4", "#8b6f78"]
+          }
+        },
+        "tooltip": [
+          {"field": "disease", "title": "Disease type"},
+          {"field": "share", "title": "Share", "format": ".1f"}
+        ]
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "dx": 8,
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "color": "#2d1b22"
+      },
+      "encoding": {
+        "y": {
+          "field": "disease",
+          "type": "nominal",
+          "sort": "-x"
+        },
+        "x": {"field": "share", "type": "quantitative"},
+        "text": {
+          "field": "share",
+          "type": "quantitative",
+          "format": ".1f"
+        }
+      }
+    },
+    {
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "fontSize": 13,
+        "fontWeight": "bold",
+        "color": "#5a2436"
+      },
+      "encoding": {
+        "x": {"datum": 30},
+        "y": {"datum": "Stroke"},
+        "text": {
+          "value": "Ischemic heart disease and stroke account for about three quarters of projected CVD deaths."
+        }
+      }
+    }
+  ],
+  "config": {
+    "view": {"stroke": null},
+    "axis": {
+      "domain": false,
+      "ticks": false,
+      "titleColor": "#5a2436",
+      "titleFontWeight": "bold"
+    }
+  }
+}

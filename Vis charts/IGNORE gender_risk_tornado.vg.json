@@ -1,0 +1,147 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "background": "#fffdfb",
+  "padding": 18,
+  "width": 780,
+  "height": 390,
+  "title": {
+    "text": "How do cardiovascular risk factors differ by sex?",
+    "subtitle": "Mirror chart comparing the percentage of male and female patients with selected risk factors.",
+    "anchor": "start",
+    "fontSize": 24,
+    "subtitleFontSize": 13,
+    "fontWeight": "bold",
+    "color": "#5a2436",
+    "subtitleColor": "#7b646b"
+  },
+  "data": {
+    "url": "../data/heart_attack_prediction_dataset.csv"
+  },
+  "transform": [
+    {
+      "calculate": "datum.Sex == 'Male' ? 'Male' : 'Female'",
+      "as": "sex_clean"
+    },
+    {
+      "calculate": "datum.Smoking == 1 ? 1 : 0",
+      "as": "Smoking"
+    },
+    {
+      "calculate": "datum.Diabetes == 1 ? 1 : 0",
+      "as": "Diabetes"
+    },
+    {
+      "calculate": "datum.Obesity == 1 ? 1 : 0",
+      "as": "Obesity"
+    },
+    {
+      "calculate": "datum.Cholesterol >= 240 ? 1 : 0",
+      "as": "High cholesterol"
+    },
+    {
+      "calculate": "datum['Stress Level'] >= 7 ? 1 : 0",
+      "as": "High stress"
+    },
+    {
+      "calculate": "datum['Heart Attack Risk'] == 1 ? 1 : 0",
+      "as": "Heart attack risk"
+    },
+    {
+      "fold": [
+        "Smoking",
+        "Obesity",
+        "High stress",
+        "High cholesterol",
+        "Heart attack risk",
+        "Diabetes"
+      ],
+      "as": ["risk_factor", "risk_value"]
+    },
+    {
+      "aggregate": [
+        {"op": "mean", "field": "risk_value", "as": "risk_rate"}
+      ],
+      "groupby": ["sex_clean", "risk_factor"]
+    },
+    {
+      "calculate": "datum.risk_rate * 100",
+      "as": "risk_percent"
+    },
+    {
+      "calculate": "datum.sex_clean == 'Male' ? -datum.risk_percent : datum.risk_percent",
+      "as": "signed_percent"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {"type": "bar", "cornerRadiusEnd": 6},
+      "encoding": {
+        "y": {
+          "field": "risk_factor",
+          "type": "nominal",
+          "title": null,
+          "sort": ["Diabetes", "Heart attack risk", "High cholesterol", "High stress", "Obesity", "Smoking"],
+          "axis": {"labelFontSize": 13, "labelFontWeight": "bold"}
+        },
+        "x": {
+          "field": "signed_percent",
+          "type": "quantitative",
+          "title": "Percentage of patients",
+          "scale": {"domain": [-80, 80]},
+          "axis": {
+            "labelExpr": "abs(datum.value) + '%'",
+            "gridColor": "#f0ddd6"
+          }
+        },
+        "color": {
+          "field": "sex_clean",
+          "type": "nominal",
+          "title": "Sex",
+          "scale": {
+            "domain": ["Male", "Female"],
+            "range": ["#7ea7a1", "#d1495b"]
+          }
+        },
+        "tooltip": [
+          {"field": "sex_clean", "title": "Sex"},
+          {"field": "risk_factor", "title": "Risk factor"},
+          {"field": "risk_percent", "title": "Patients affected", "format": ".1f"}
+        ]
+      }
+    },
+    {
+      "mark": {"type": "rule", "strokeWidth": 2, "color": "#5a2436"},
+      "encoding": {"x": {"datum": 0}}
+    },
+    {
+      "mark": {"type": "text", "fontSize": 18, "fontWeight": "bold", "color": "#5a2436"},
+      "encoding": {
+        "x": {"datum": -55},
+        "y": {"datum": "Heart attack risk"},
+        "text": {"value": "Male"}
+      }
+    },
+    {
+      "mark": {"type": "text", "fontSize": 18, "fontWeight": "bold", "color": "#5a2436"},
+      "encoding": {
+        "x": {"datum": 55},
+        "y": {"datum": "Heart attack risk"},
+        "text": {"value": "Female"}
+      }
+    }
+  ],
+  "config": {
+    "view": {"stroke": null},
+    "axis": {
+      "domain": false,
+      "ticks": false,
+      "labelColor": "#2d1b22",
+      "titleColor": "#5a2436",
+      "titleFontWeight": "bold"
+    },
+    "legend": {
+      "labelColor": "#2d1b22",
+      "titleColor": "#5a2436"
+    }
+  }
+}

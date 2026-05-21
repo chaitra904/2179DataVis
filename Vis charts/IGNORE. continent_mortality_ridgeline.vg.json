@@ -1,0 +1,181 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "background": "#f8fbff",
+  "padding": 20,
+  "title": {
+    "text": "Where are projected cardiovascular mortality rates most concentrated?",
+    "subtitle": "Ridgeline density plot of country-level mortality rates by continent in 2050. Gold line marks Australia at 20.9 deaths per 100,000.",
+    "anchor": "start",
+    "fontSize": 22,
+    "subtitleFontSize": 13,
+    "fontWeight": "bold",
+    "color": "#071d3a",
+    "subtitleColor": "#475569"
+  },
+  "width": 800,
+  "height": 420,
+  "data": {
+    "url": "../data/global_cvd_burden_2025_2050.csv"
+  },
+  "transform": [
+    {"filter": "datum.year == 2050"},
+    {"filter": "datum.continent != 'Oceania'"},
+    {"filter": "datum.age_std_mortality_rate_per_100k > 0"},
+    {
+      "density": "age_std_mortality_rate_per_100k",
+      "groupby": ["continent"],
+      "extent": [0, 350],
+      "steps": 160,
+      "as": ["mortality", "density"]
+    },
+    {
+      "calculate": "datum.continent == 'Africa' ? 4 : datum.continent == 'Asia' ? 3 : datum.continent == 'Americas' ? 2 : 1",
+      "as": "baseline"
+    },
+    {
+      "calculate": "datum.baseline + datum.density * 85",
+      "as": "ridge_height"
+    }
+  ],
+  "layer": [
+    {
+      "mark": {
+        "type": "area",
+        "interpolate": "monotone",
+        "opacity": 0.9,
+        "line": {
+          "color": "#071d3a",
+          "strokeWidth": 1.1
+        }
+      },
+      "encoding": {
+        "x": {
+          "field": "mortality",
+          "type": "quantitative",
+          "title": "Age-standardised mortality rate per 100,000 people",
+          "scale": {"domain": [0, 350]},
+          "axis": {
+            "grid": true,
+            "gridColor": "#dbe4ee",
+            "tickCount": 8
+          }
+        },
+        "y": {
+          "field": "ridge_height",
+          "type": "quantitative",
+          "axis": null
+        },
+        "y2": {"field": "baseline"},
+        "color": {
+          "field": "continent",
+          "type": "nominal",
+          "legend": null,
+          "scale": {
+            "domain": ["Africa", "Asia", "Americas", "Europe"],
+            "range": ["#2563eb", "#7c3aed", "#0ea5e9", "#f59e0b"]
+          }
+        },
+        "tooltip": [
+          {"field": "continent", "title": "Continent"},
+          {"field": "mortality", "title": "Mortality rate", "format": ".1f"},
+          {"field": "density", "title": "Density", "format": ".3f"}
+        ]
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {"continent": "Africa", "x": 5, "y": 4.32},
+          {"continent": "Asia", "x": 5, "y": 3.32},
+          {"continent": "Americas", "x": 5, "y": 2.32},
+          {"continent": "Europe", "x": 5, "y": 1.32}
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "fontSize": 13,
+        "fontWeight": "bold",
+        "color": "#071d3a"
+      },
+      "encoding": {
+        "x": {"field": "x", "type": "quantitative"},
+        "y": {"field": "y", "type": "quantitative"},
+        "text": {"field": "continent"}
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {"x": 20.9, "y1": 0.85, "y2": 4.75}
+        ]
+      },
+      "mark": {
+        "type": "rule",
+        "stroke": "#d4a017",
+"strokeWidth": 2,
+"strokeOpacity": 0.7,
+"strokeDash": [4,4]
+       
+      },
+      "encoding": {
+        "x": {"field": "x", "type": "quantitative"},
+        "y": {"field": "y1", "type": "quantitative"},
+        "y2": {"field": "y2"}
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {
+            "x": 24,
+            "y": 4.65,
+            "label": "Australia: 20.9"
+          }
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "fontSize": 12,
+        "fontWeight": "bold",
+        "color": "#071d3a"
+      },
+      "encoding": {
+        "x": {"field": "x", "type": "quantitative"},
+        "y": {"field": "y", "type": "quantitative"},
+        "text": {"field": "label"}
+      }
+    },
+    {
+      "data": {
+        "values": [
+          {"x": 238, "y": 4.58, "note": "Africa is concentrated at high projected mortality."},
+          {"x": 210, "y": 3.70, "note": "Asia has the widest spread across countries."},
+          {"x": 72, "y": 1.65, "note": "Europe is mostly concentrated at lower rates."}
+        ]
+      },
+      "mark": {
+        "type": "text",
+        "align": "left",
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "color": "#071d3a"
+      },
+      "encoding": {
+        "x": {"field": "x", "type": "quantitative"},
+        "y": {"field": "y", "type": "quantitative"},
+        "text": {"field": "note"}
+      }
+    }
+  ],
+  "config": {
+    "view": {"stroke": null},
+    "axis": {
+      "labelFontSize": 11,
+      "titleFontSize": 12,
+      "labelColor": "#334155",
+      "titleColor": "#071d3a"
+    }
+  }
+}

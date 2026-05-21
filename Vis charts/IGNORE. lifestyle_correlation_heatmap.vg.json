@@ -1,0 +1,184 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+
+  "background": "#fffdfb",
+
+  "title": {
+    "text": "Which lifestyle factors are most associated with heart attack risk?",
+    "subtitle": "Heatmap comparing behavioural and clinical indicators across predicted cardiovascular risk levels.",
+    "anchor": "start",
+    "fontSize": 22,
+    "subtitleFontSize": 13,
+    "fontWeight": "bold",
+    "color": "#5a2436",
+    "subtitleColor": "#6f5b61"
+  },
+
+  "width": 720,
+  "height": 360,
+
+  "data": {
+    "url": "../data/heart_attack_prediction_dataset.csv"
+  },
+
+  "transform": [
+
+    {
+      "calculate": "datum['Heart Attack Risk'] < 0.33 ? 'Low risk' : datum['Heart Attack Risk'] < 0.66 ? 'Moderate risk' : 'High risk'",
+      "as": "risk_group"
+    },
+
+    {
+      "fold": [
+        "Stress Level",
+        "BMI",
+        "Sedentary Hours Per Day",
+        "Exercise Hours Per Week",
+        "Sleep Hours Per Day",
+        "Cholesterol",
+        "Triglycerides"
+      ],
+
+      "as": ["factor", "value"]
+    },
+
+    {
+      "aggregate": [
+        {
+          "op": "mean",
+          "field": "value",
+          "as": "avg_value"
+        }
+      ],
+
+      "groupby": [
+        "risk_group",
+        "factor"
+      ]
+    }
+  ],
+
+  "layer": [
+
+    {
+      "mark": {
+        "type": "rect",
+        "cornerRadius": 7,
+        "stroke": "#fff8f5",
+        "strokeWidth": 3
+      },
+
+      "encoding": {
+
+        "x": {
+          "field": "risk_group",
+          "type": "ordinal",
+          "title": "Predicted heart attack risk",
+
+          "sort": [
+            "Low risk",
+            "Moderate risk",
+            "High risk"
+          ],
+
+          "axis": {
+            "labelFontSize": 12,
+            "labelFontWeight": "bold",
+            "labelColor": "#2d1b22"
+          }
+        },
+
+        "y": {
+          "field": "factor",
+          "type": "nominal",
+          "title": null,
+
+          "axis": {
+            "labelFontSize": 12,
+            "labelFontWeight": "bold",
+            "labelColor": "#2d1b22"
+          }
+        },
+
+        "color": {
+          "field": "avg_value",
+          "type": "quantitative",
+
+          "title": "Average value",
+
+          "scale": {
+            "scheme": "redpurple"
+          },
+
+          "legend": {
+            "orient": "right"
+          }
+        },
+
+        "tooltip": [
+          {
+            "field": "factor",
+            "title": "Lifestyle factor"
+          },
+
+          {
+            "field": "risk_group",
+            "title": "Risk level"
+          },
+
+          {
+            "field": "avg_value",
+            "title": "Average value",
+            "format": ".2f"
+          }
+        ]
+      }
+    },
+
+    {
+      "mark": {
+        "type": "text",
+        "fontSize": 11,
+        "fontWeight": "bold",
+        "color": "#2d1b22"
+      },
+
+      "encoding": {
+
+        "x": {
+          "field": "risk_group",
+          "type": "ordinal",
+
+          "sort": [
+            "Low risk",
+            "Moderate risk",
+            "High risk"
+          ]
+        },
+
+        "y": {
+          "field": "factor",
+          "type": "nominal"
+        },
+
+        "text": {
+          "field": "avg_value",
+          "type": "quantitative",
+          "format": ".1f"
+        }
+      }
+    }
+  ],
+
+  "config": {
+
+    "view": {
+      "stroke": null
+    },
+
+    "axis": {
+      "domain": false,
+      "ticks": false
+    }
+  }
+}
