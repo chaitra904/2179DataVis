@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cardiovascular Futures</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <main class="page">
+
+    <section class="cover">
+      <p class="unit">FIT2179 Data Visualisation 2</p>
+      <h1>Cardiovascular Futures</h1>
+      <p class="subtitle">
+        An interactive visual story of cardiovascular mortality, prevention strength,
+        disease composition, and global inequality.
+      </p>
+    </section>
+
+    <section class="aus-evidence">
+      <div class="evidence-header">
+        <p class="section-kicker">Australia context</p>
+        <h2>Why cardiovascular disease still matters in Australia</h2>
+      </div>
+
+      <div class="evidence-grid">
+        <div class="evidence-card">
+          <div class="icon">♥</div>
+          <h3>4.5M+</h3>
+          <p>Australians self-report living with cardiovascular disease.</p>
+        </div>
+
+        <div class="evidence-card">
+          <div class="icon">¼</div>
+          <h3>1 in 4</h3>
+          <p>Australian deaths are caused by cardiovascular disease.</p>
+        </div>
+
+        <div class="evidence-card">
+          <div class="icon">⏱</div>
+          <h3>12 mins</h3>
+          <p>One Australian dies from CVD roughly every 12 minutes.</p>
+        </div>
+
+        <div class="evidence-card">
+          <div class="icon">$</div>
+          <h3>$12.7B</h3>
+          <p>Estimated annual health expenditure linked to cardiovascular disease.</p>
+        </div>
+      </div>
+
+      <p class="hook">
+        Australia is not the centre of the global cardiovascular crisis, but the disease still
+        shapes national deaths, health spending and prevention priorities.
+      </p>
+
+      <p class="source-note">
+        Source: Heart Foundation Australia key cardiovascular disease statistics.
+      </p>
+    </section>
+
+    <section class="story">
+      <p class="section-kicker">1 · Global position</p>
+      <h2>Where does Australia sit in the future cardiovascular crisis?</h2>
+      <p>
+        The map places Australia within the global pattern of projected CVD mortality,
+        showing where the future burden is expected to concentrate.
+      </p>
+
+      <ul class="insight-list">
+        <li>Highest projected mortality is concentrated across Central Asia.</li>
+        <li>Australia remains comparatively low, but CVD is still nationally significant.</li>
+      </ul>
+
+      <div class="viz" id="map"></div>
+    </section>
+
+    <section class="story">
+      <p class="section-kicker">2 · Why CVD still matters</p>
+      <h2>Has cardiovascular disease remained a dominant killer over time?</h2>
+      <p>
+        Historical mortality patterns show whether cardiovascular disease has remained
+        a persistent burden compared with other major disease groups.
+      </p>
+
+      <ul class="insight-list">
+        <li>CVD remains one of the largest mortality categories across the full historical period.</li>
+        <li>This explains why future prevention is still important, even in lower-rate countries.</li>
+      </ul>
+
+      <div class="viz" id="streamgraph"></div>
+    </section>
+
+    <section class="story two">
+      <div>
+        <p class="section-kicker">3 · Future pathways</p>
+        <h2>Are countries improving at the same pace by 2050?</h2>
+        <p>
+          Selected countries show different projected mortality pathways from 2025 to 2050.
+        </p>
+
+        <ul class="insight-list">
+          <li>Australia remains low compared with selected major countries.</li>
+          <li>Higher-rate countries still carry much heavier projected mortality.</li>
+        </ul>
+
+        <div class="viz" id="trend"></div>
+      </div>
+
+      <div>
+        <p class="section-kicker">4 · Regional inequality</p>
+        <h2>Do regional averages hide country-level differences?</h2>
+        <p>
+          Country-level dots and continental medians reveal how widely projected mortality
+          varies within each region.
+        </p>
+
+        <ul class="insight-list">
+          <li>Asia shows wide internal variation, meaning regional labels hide inequality.</li>
+          <li>Australia is shown as a reference point rather than grouped into Oceania.</li>
+        </ul>
+
+        <div class="viz" id="stripplot"></div>
+      </div>
+    </section>
+
+    <section class="story two">
+      <div>
+        <p class="section-kicker">5 · What types of CVD drive deaths?</p>
+        <h2>Which cardiovascular diseases make up the future burden?</h2>
+        <p>
+          Projected cardiovascular deaths are concentrated in a small number of disease categories.
+        </p>
+
+        <ul class="insight-list">
+          <li>Ischemic heart disease and stroke together account for about three quarters of projected CVD deaths.</li>
+        </ul>
+
+        <div class="viz" id="diseaseBar"></div>
+      </div>
+
+      <div>
+        <p class="section-kicker">6 · Preventable drivers</p>
+        <h2>Which risk factors are the clearest prevention targets?</h2>
+        <p>
+          Modifiable risk factors shift the story from disease burden to prevention action.
+        </p>
+
+        <ul class="insight-list">
+          <li>Risk factors shift the story from disease burden to prevention action.</li>
+          <li>The largest attributable risks should be read as priority areas for intervention.</li>
+        </ul>
+
+        <div class="viz" id="riskLollipop"></div>
+      </div>
+    </section>
+
+    <section class="story two">
+      <div>
+        <p class="section-kicker">7 · Prevention and outcomes</p>
+        <h2>Do stronger prevention systems align with lower mortality?</h2>
+        <p>
+          The bubble plot connects risk, prevention and mortality by comparing prevention scores
+          with projected mortality rates.
+        </p>
+
+        <ul class="insight-list">
+          <li>Higher prevention scores generally align with lower projected mortality.</li>
+          <li>Bubble size shows that total deaths still matter, not just rates.</li>
+        </ul>
+
+        <div class="viz" id="bubble"></div>
+      </div>
+
+      <div>
+        <p class="section-kicker">8 · System readiness</p>
+        <h2>Which health systems look better prepared for future CVD burden?</h2>
+        <p>
+          Preparedness is compared across prevention, treatment, rehabilitation and health-pressure indicators.
+        </p>
+
+        <ul class="insight-list">
+          <li>Preparedness is uneven across prevention, treatment and rehabilitation.</li>
+          <li>Health pressure is reverse-scored, so darker means better preparedness.</li>
+        </ul>
+
+        <div class="viz" id="heatmap"></div>
+      </div>
+    </section>
+
+    <section class="story two">
+      <div>
+        <p class="section-kicker">9 · Patient-level risk</p>
+        <h2>Do heavier smokers show elevated blood pressure earlier?</h2>
+        <p>
+          After the global and health-system view, the dashboard zooms into patient-level
+          risk patterns to show how lifestyle factors appear in individual clinical data.
+        </p>
+
+        <ul class="insight-list">
+          <li>Heavy smokers show higher average systolic blood pressure in several older age groups.</li>
+          <li>This chart shows association, not causation.</li>
+        </ul>
+
+        <div class="viz" id="smokingAge"></div>
+      </div>
+
+      <div>
+        <p class="section-kicker">10 · High-risk patient profile</p>
+        <h2>Which lifestyle and clinical factors separate high-risk groups?</h2>
+        <p>
+          Relative differences between low- and high-risk patients act as the final patient-level profile.
+        </p>
+
+        <ul class="insight-list">
+          <li>Positive values are higher among high-risk patients.</li>
+          <li>Exercise and sleep sit lower, while cholesterol, triglycerides and stress sit higher.</li>
+        </ul>
+
+        <div class="viz" id="lifestyleDiff"></div>
+      </div>
+    </section>
+
+    <section class="takeaway">
+      <p class="section-kicker">Final takeaway</p>
+      <h2>Cardiovascular risk is not only a future mortality problem.</h2>
+      <p>
+        It is a prevention, inequality and preparedness problem. Australia appears comparatively
+        protected in global projections, but the dashboard shows why prevention still matters:
+        disease burden is concentrated in ischemic heart disease and stroke, modifiable risks
+        remain major drivers, and health systems vary in how prepared they are to respond.
+      </p>
+    </section>
+
+    <footer>
+      Author: Chaitra Shinde · Built with Vega-Lite, HTML, CSS and GitHub Pages
+    </footer>
+
+  </main>
+
+  <script>
+    const embedOptions = { actions: false, renderer: "svg" };
+
+    vegaEmbed("#map", "Vis charts/1. world_cvd_map.vg.json", embedOptions);
+    vegaEmbed("#streamgraph", "Vis charts/11.cause_of_death_streamgraph.vg.json", embedOptions);
+    vegaEmbed("#trend", "Vis charts/6. cvd_trend_2025_2050.vg.json", embedOptions);
+    vegaEmbed("#stripplot", "Vis charts/2. continent_mortality_stripplot.vg.json", embedOptions);
+    vegaEmbed("#diseaseBar", "Vis charts/4. cvd_disease_composition_bar.vg.json", embedOptions);
+    vegaEmbed("#riskLollipop", "Vis charts/5. future_risk_factor_lollipop.vg.json", embedOptions);
+    vegaEmbed("#bubble", "Vis charts/8. prevention_vs_mortality_bubble.vg.json", embedOptions);
+    vegaEmbed("#heatmap", "Vis charts/7. health_system_scorecard_heatmap.vg.json", embedOptions);
+    vegaEmbed("#smokingAge", "Vis charts/9. smoking_age_risk_heatmap.vg.json", embedOptions);
+    vegaEmbed("#lifestyleDiff", "Vis charts/10. lifestyle_risk_difference.vg.json", embedOptions);
+  </script>
+</body>
+</html>
