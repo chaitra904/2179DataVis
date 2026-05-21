@@ -15,7 +15,7 @@
     "subtitleColor": "#7b646b"
   },
   "data": {
-    "url": "../data/global_cvd_burden_2025_2050.csv"
+    "url": "data/global_cvd_burden_2025_2050.csv"
   },
   "transform": [
     {"filter": "datum.year == 2050"},

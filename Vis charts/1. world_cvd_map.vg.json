@@ -14,7 +14,7 @@
   "width": 920,
   "height": 500,
   "projection": {"type": "equalEarth"},
-  "data": {"url": "../data/global_cvd_burden_2025_2050.csv"},
+  "data": {"url": "data/global_cvd_burden_2025_2050.csv"},
   "transform": [
     {"filter": "datum.year == 2050"},
     {

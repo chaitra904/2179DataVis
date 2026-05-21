@@ -18,7 +18,7 @@
   "height": 340,
 
   "data": {
-    "url": "../data/smoking_risk_data.csv"
+    "url": "data/smoking_risk_data.csv"
   },
 
   "transform": [

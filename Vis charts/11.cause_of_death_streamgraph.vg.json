@@ -17,7 +17,7 @@
   },
 
   "data": {
-    "url": "../data/cause_of_deaths.csv"
+    "url": "data/cause_of_deaths.csv"
   },
 
   "transform": [

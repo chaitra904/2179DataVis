@@ -15,7 +15,7 @@
   "width": 820,
   "height": 430,
   "data": {
-    "url": "../data/global_cvd_burden_2025_2050.csv"
+    "url": "data/global_cvd_burden_2025_2050.csv"
   },
   "transform": [
     {
